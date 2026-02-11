@@ -1,0 +1,290 @@
+// PlanDev - Schema de Base de Datos (PostgreSQL / Supabase)
+// Documentación: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// MODELOS DE AUTENTICACIÓN (NextAuth)
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?   // Para credentials provider (hash)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  projects Project[]
+  config   UserConfig?  // Configuración personalizada
+
+  @@index([email])
+}
+
+// Configuración personalizada por usuario
+// Permite sobrescribir las constantes por defecto
+model UserConfig {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Tarifas por defecto (USD/hora)
+  developerRate Float @default(50)
+  qaRate        Float @default(40)
+  pmRate        Float @default(60)
+
+  // Límites de semanas por complejidad
+  weekLimitSimple  Int @default(2)
+  weekLimitMedium  Int @default(5)
+  weekLimitComplex Int @default(12)
+
+  // Distribución de fases (porcentajes, suma = 1.0)
+  phaseAnalysis    Float @default(0.10)
+  phaseDesign      Float @default(0.15)
+  phaseDevelopment Float @default(0.50)
+  phaseTesting     Float @default(0.15)
+  phaseDeployment  Float @default(0.10)
+
+  // Contingencia por nivel de riesgo
+  contingencyLow      Float @default(0.10)
+  contingencyMedium   Float @default(0.15)
+  contingencyHigh     Float @default(0.20)
+  contingencyVeryHigh Float @default(0.30)
+
+  // Configuración de equipo por defecto
+  defaultHoursPerWeek Int    @default(40)
+  defaultTeamSize     Int    @default(1)
+  defaultDevelopers   Int    @default(1)
+  defaultQaMembers    Int    @default(0)
+  defaultHoursPerDay  Int    @default(8)
+  defaultWorkDays     String @default("[\"L\",\"M\",\"Mi\",\"J\",\"V\"]")
+
+  // Configuración de IA
+  aiTemperature Float  @default(0.5)
+  aiMaxTokens   Int    @default(8000)
+  aiModel       String @default("sonar")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// MODELOS PRINCIPALES
+// ============================================
+
+model Project {
+  id         String   @id @default(cuid())
+  userId     String?  // Relación con usuario (opcional para migración)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  type       String   // web, mobile, ecommerce, internal
+  currency   String   @default("USD")
+  language   String   @default("es")
+  shareToken String?  @unique // Token para compartir públicamente
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  config       ProjectConfig?
+  requirements Requirements?
+  technical    TechnicalConfig?
+  modules      Module[]
+  proposal     Proposal?
+  planHistory  PlanHistory[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+model ProjectConfig {
+  id            String   @id @default(cuid())
+  projectId     String   @unique
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  developerRate Float    @default(0)
+  qaRate        Float    @default(0)
+  pmRate        Float    @default(0)
+  hoursPerWeek  Int      @default(40)
+  teamSize      Int      @default(1)
+  startDate     DateTime?
+  freelancerName String  @default("Tu Nombre")
+
+  // Work schedule
+  workDays      String   @default("[\"L\",\"M\",\"Mi\",\"J\",\"V\"]") // JSON array of days
+  hoursPerDay   Int      @default(8)
+
+  // Nuevos campos para estimaciones precisas
+  complexity    String   @default("medium")  // simple, medium, complex
+  clientType    String   @default("startup") // personal, startup, medium, enterprise
+  deadline      String   @default("normal")  // flexible, normal, urgent
+  budgetRange   String?  // "<1000", "1000-5000", "5000-15000", ">15000"
+  developers    Int      @default(1)
+  qaMembers     Int      @default(0)
+}
+
+model Requirements {
+  id           String  @id @default(cuid())
+  projectId    String  @unique
+  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  description  String
+  objective    String?
+  userRoles    String  @default("[]") // JSON array as string
+  features     String  @default("[]") // JSON array as string
+  integrations String  @default("[]") // JSON array as string
+  
+  // Campos para estimación precisa
+  hasPayments         Boolean @default(false)
+  screenCount         String  @default("medium") // few, medium, many
+  requirementsClarity String  @default("moderate") // clear, moderate, vague
+}
+
+model TechnicalConfig {
+  id             String  @id @default(cuid())
+  projectId      String  @unique
+  project        Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  architecture   String?
+  frontend       String?
+  backend        String?
+  database       String?
+  infrastructure String?
+  constraints    String?
+}
+
+model Module {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  order       Int     @default(0)
+  
+  // Contingencia por módulo
+  contingencyPercent Float @default(0.15)  // 15% por defecto
+  contingencyHours   Float @default(0)
+  
+  tasks       Task[]
+
+  @@index([projectId])
+  @@index([order])
+}
+
+model Task {
+  id             String    @id @default(cuid())
+  moduleId       String
+  module         Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  name           String
+  description    String?
+  userStory      String?   // Historia de usuario generada por IA
+  phase          String    // analysis, design, development, testing, deployment
+  
+  // Estimación PERT (3 puntos)
+  hoursOptimistic  Float   @default(0) // O - mejor caso
+  hoursMostLikely  Float   @default(0) // M - caso esperado  
+  hoursPessimistic Float   @default(0) // P - peor caso
+  hoursExpected    Float   @default(0) // E = (O + 4M + P) / 6
+  hoursDeviation   Float?  // σ = (P - O) / 6
+  
+  // Compatibilidad: mantener estimatedHours como alias de hoursExpected
+  estimatedHours Float     @default(0) // = hoursExpected (para compatibilidad)
+  actualHours    Float?    // horas reales trabajadas
+  
+  role           String    @default("developer")
+  order          Int       @default(0)
+  status         String    @default("pending") // pending, in_progress, completed
+  dueDate        DateTime? // fecha límite
+  completedAt    DateTime? // fecha de finalización
+
+  @@index([moduleId])
+  @@index([phase])
+  @@index([status])
+  @@index([moduleId, phase])
+}
+
+model Proposal {
+  id         String   @id @default(cuid())
+  projectId  String   @unique
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  content    String
+  baseHours  Float    @default(0)  // Horas sin contingencia
+  contingencyPercent Float @default(0.15) // Porcentaje de contingencia
+  contingencyHours   Float @default(0)    // Horas de contingencia
+  totalHours Float    // baseHours + contingencyHours
+  totalCost  Float
+  duration   String?
+  createdAt  DateTime @default(now())
+}
+
+// Historial de planes generados
+model PlanHistory {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  // Snapshot del plan
+  modulesData  String   // JSON con módulos y tareas
+  proposalData String?  // JSON con propuesta
+  
+  // Metadatos
+  totalHours  Float
+  totalCost   Float
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  note        String?  // Nota opcional del usuario
+
+  @@index([projectId])
+  @@index([createdAt])
+}

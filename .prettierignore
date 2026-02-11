@@ -1,0 +1,22 @@
+# Prettier ignore patterns
+node_modules
+.next
+out
+build
+dist
+coverage
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Database
+*.db
+*.db-journal
+prisma/migrations
+
+# Generated files
+*.tsbuildinfo
+.env*
+!.env.example
