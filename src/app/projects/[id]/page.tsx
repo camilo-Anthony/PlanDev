@@ -354,25 +354,36 @@ export default function ProjectDetailPage({
         <div className="min-h-screen bg-background">
             {/* Header */}
             <header className="border-b border-border bg-background/50 backdrop-blur-sm sticky top-0 z-10">
-                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link href="/" className="text-xl font-bold text-foreground flex items-center gap-2">
-                            <Layers className="h-6 w-6" />
-                            PlanDev
+                <div className="container mx-auto px-4 py-3">
+                    {/* Top row: logo + back */}
+                    <div className="flex items-center justify-between mb-2 sm:mb-0">
+                        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                            <Link href="/" className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2 shrink-0">
+                                <Layers className="h-5 w-5 sm:h-6 sm:w-6" />
+                                <span className="hidden sm:inline">PlanDev</span>
+                            </Link>
+                            <span className="text-muted-foreground hidden sm:inline">/</span>
+                            <span className="text-muted-foreground text-sm sm:text-base truncate">{project.name}</span>
+                        </div>
+                        <Link href="/projects" className="shrink-0">
+                            <Button variant="ghost" size="sm">
+                                <ArrowLeft className="h-4 w-4 sm:mr-2" />
+                                <span className="hidden sm:inline">Volver</span>
+                            </Button>
                         </Link>
-                        <span className="text-muted-foreground">/</span>
-                        <span className="text-muted-foreground">{project.name}</span>
                     </div>
-                    <div className="flex gap-2 flex-wrap text-foreground">
+                    {/* Bottom row: action buttons */}
+                    <div className="flex gap-1.5 sm:gap-2 flex-wrap text-foreground">
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <Button
                                     disabled={generating}
                                     variant="default"
+                                    size="sm"
                                     className="bg-primary text-primary-foreground hover:bg-primary/90"
                                 >
-                                    {generating ? <RotateCw className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
-                                    {generating ? "Generando..." : "Regenerar"}
+                                    {generating ? <RotateCw className="h-4 w-4 animate-spin sm:mr-2" /> : <Bot className="h-4 w-4 sm:mr-2" />}
+                                    <span className="hidden sm:inline">{generating ? "Generando..." : "Regenerar"}</span>
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
@@ -402,19 +413,20 @@ export default function ProjectDetailPage({
                         {project.modules.length > 0 && (
                             <>
                                 <a href={`/api/projects/${id}/export/markdown`} download>
-                                    <Button variant="outline" size="icon" title="Exportar MD">
+                                    <Button variant="outline" size="sm" title="Exportar MD" className="px-2 sm:px-3">
                                         <FileText className="h-4 w-4" />
                                     </Button>
                                 </a>
                                 <a href={`/api/projects/${id}/export/csv`} download>
-                                    <Button variant="outline" size="icon" title="Exportar CSV">
+                                    <Button variant="outline" size="sm" title="Exportar CSV" className="px-2 sm:px-3">
                                         <Table className="h-4 w-4" />
                                     </Button>
                                 </a>
                                 <Button
                                     variant="outline"
-                                    size="icon"
+                                    size="sm"
                                     title="Compartir"
+                                    className="px-2 sm:px-3"
                                     onClick={async () => {
                                         const res = await fetch(`/api/projects/${id}/share`, { method: "POST" });
                                         const data = await res.json();
@@ -426,8 +438,9 @@ export default function ProjectDetailPage({
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    size="icon"
+                                    size="sm"
                                     title="Duplicar"
+                                    className="px-2 sm:px-3"
                                     onClick={async () => {
                                         if (!confirm("¿Duplicar este proyecto?")) return;
                                         const res = await fetch(`/api/projects/${id}/duplicate`, { method: "POST" });
@@ -438,12 +451,13 @@ export default function ProjectDetailPage({
                                     <Copy className="h-4 w-4" />
                                 </Button>
                                 <a href={`/api/projects/${id}/export/pdf`} target="_blank">
-                                    <Button variant="outline" size="icon" title="Exportar PDF">
+                                    <Button variant="outline" size="sm" title="Exportar PDF" className="px-2 sm:px-3">
                                         <Download className="h-4 w-4" />
                                     </Button>
                                 </a>
                                 <Button
                                     variant="outline"
+                                    size="sm"
                                     onClick={async () => {
                                         if (!confirm("¿Generar historias de usuario con IA? Esto tomará unos segundos.")) return;
                                         const btn = document.activeElement as HTMLButtonElement;
@@ -466,11 +480,12 @@ export default function ProjectDetailPage({
                                         btn.disabled = false;
                                     }}
                                 >
-                                    <BookOpen className="mr-2 h-4 w-4" />
-                                    Historias IA
+                                    <BookOpen className="h-4 w-4 sm:mr-2" />
+                                    <span className="hidden sm:inline">Historias IA</span>
                                 </Button>
                                 <Button
                                     variant="outline"
+                                    size="sm"
                                     onClick={async () => {
                                         const btn = document.activeElement as HTMLButtonElement;
                                         const originalText = btn.innerHTML;
@@ -493,17 +508,11 @@ export default function ProjectDetailPage({
                                     }}
                                     title="Recalcular costos y duración"
                                 >
-                                    <DollarSign className="mr-2 h-4 w-4" />
-                                    Recalcular
+                                    <DollarSign className="h-4 w-4 sm:mr-2" />
+                                    <span className="hidden sm:inline">Recalcular</span>
                                 </Button>
                             </>
                         )}
-                        <Link href="/projects">
-                            <Button variant="ghost">
-                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                Volver
-                            </Button>
-                        </Link>
                     </div>
                 </div>
             </header>
@@ -512,7 +521,7 @@ export default function ProjectDetailPage({
                 {/* Stats */}
                 {/* Stats */}
                 {project.proposal && (
-                    <div className="grid md:grid-cols-4 gap-4 mb-8 text-foreground">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8 text-foreground">
                         <Card className="bg-card border-border">
                             <CardContent className="pt-6">
                                 <div className="text-3xl font-bold">{Math.round(project.proposal.totalHours)}h</div>
@@ -866,7 +875,7 @@ export default function ProjectDetailPage({
                     return (
                         <div className="space-y-6 text-foreground">
                             {/* Progress Overview */}
-                            <div className="grid md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                                 <Card className="bg-card border-border">
                                     <CardContent className="pt-6 text-center">
                                         <div className="text-4xl font-bold text-primary">{progress}%</div>
@@ -902,7 +911,7 @@ export default function ProjectDetailPage({
                                     <CardTitle>Horas Estimadas vs Reales</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="flex gap-8">
+                                    <div className="flex flex-wrap gap-4 sm:gap-8">
                                         <div>
                                             <div className="text-2xl font-bold text-primary">{Math.round(totalEstimated)}h</div>
                                             <div className="text-sm text-muted-foreground">Estimadas</div>
@@ -929,34 +938,38 @@ export default function ProjectDetailPage({
                                 <CardContent>
                                     <div className="space-y-2">
                                         {allTasks.map((task) => (
-                                            <div key={task.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                                                <Select
-                                                    value={task.status || "pending"}
-                                                    onValueChange={(v) => updateTask(task.id, { status: v })}
-                                                >
-                                                    <SelectTrigger className={`w-36 border-0 ${task.status === "completed" ? "bg-green-500/20 text-green-500" :
-                                                        task.status === "in_progress" ? "bg-yellow-500/20 text-yellow-500" : "bg-muted text-muted-foreground"
-                                                        }`}>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="pending">⏳ Pendiente</SelectItem>
-                                                        <SelectItem value="in_progress">🔄 En Progreso</SelectItem>
-                                                        <SelectItem value="completed">✅ Completada</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                <Badge variant="outline" className="text-muted-foreground">{task.moduleName}</Badge>
-                                                <span className={`flex-1 ${task.status === "completed" ? "text-muted-foreground line-through" : ""}`}>
+                                            <div key={task.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 bg-muted/50 rounded-lg">
+                                                <div className="flex items-center gap-2">
+                                                    <Select
+                                                        value={task.status || "pending"}
+                                                        onValueChange={(v) => updateTask(task.id, { status: v })}
+                                                    >
+                                                        <SelectTrigger className={`w-32 sm:w-36 border-0 text-xs sm:text-sm ${task.status === "completed" ? "bg-green-500/20 text-green-500" :
+                                                            task.status === "in_progress" ? "bg-yellow-500/20 text-yellow-500" : "bg-muted text-muted-foreground"
+                                                            }`}>
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="pending">⏳ Pendiente</SelectItem>
+                                                            <SelectItem value="in_progress">🔄 En Progreso</SelectItem>
+                                                            <SelectItem value="completed">✅ Completada</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <Badge variant="outline" className="text-muted-foreground text-xs hidden sm:inline-flex">{task.moduleName}</Badge>
+                                                </div>
+                                                <span className={`flex-1 text-sm sm:text-base ${task.status === "completed" ? "text-muted-foreground line-through" : ""}`}>
                                                     {task.name}
                                                 </span>
-                                                <span className="text-muted-foreground font-mono text-sm">{Math.round(task.estimatedHours)}h</span>
-                                                <Input
-                                                    type="number"
-                                                    placeholder="Real"
-                                                    value={task.actualHours || ""}
-                                                    onChange={(e) => updateTask(task.id, { actualHours: parseFloat(e.target.value) || null })}
-                                                    className="w-20 text-center"
-                                                />
+                                                <div className="flex items-center gap-2 sm:gap-3">
+                                                    <span className="text-muted-foreground font-mono text-sm">{Math.round(task.estimatedHours)}h</span>
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Real"
+                                                        value={task.actualHours || ""}
+                                                        onChange={(e) => updateTask(task.id, { actualHours: parseFloat(e.target.value) || null })}
+                                                        className="w-20 text-center"
+                                                    />
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -976,32 +989,34 @@ export default function ProjectDetailPage({
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
-                                {/* Timeline header */}
-                                <div className="flex gap-1 text-xs text-muted-foreground pl-32">
-                                    {Array.from({ length: totalWeeks }, (_, i) => (
-                                        <div key={i} className="flex-1 text-center">S{i + 1}</div>
+                            <div className="overflow-x-auto">
+                                <div className="space-y-4 min-w-[500px]">
+                                    {/* Timeline header */}
+                                    <div className="flex gap-1 text-xs text-muted-foreground pl-24 sm:pl-32">
+                                        {Array.from({ length: totalWeeks }, (_, i) => (
+                                            <div key={i} className="flex-1 text-center">S{i + 1}</div>
+                                        ))}
+                                    </div>
+
+                                    {/* Phases */}
+                                    {roadmap.map((item) => (
+                                        <div key={item.phase} className="flex items-center gap-2">
+                                            <div className="w-24 sm:w-28 text-xs sm:text-sm text-muted-foreground shrink-0">{phaseLabels[item.phase]}</div>
+                                            <div className="flex-1 flex gap-1">
+                                                {Array.from({ length: totalWeeks }, (_, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className={`flex-1 h-8 rounded ${i >= item.startWeek && i < item.endWeek
+                                                            ? phaseColors[item.phase].replace('bg-', 'bg-').split(' ')[0].replace('/10', '')
+                                                            : "bg-muted"
+                                                            }`}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <div className="w-14 sm:w-16 text-right text-xs sm:text-sm text-muted-foreground shrink-0">{Math.round(item.hours)}h</div>
+                                        </div>
                                     ))}
                                 </div>
-
-                                {/* Phases */}
-                                {roadmap.map((item) => (
-                                    <div key={item.phase} className="flex items-center gap-2">
-                                        <div className="w-28 text-sm text-muted-foreground">{phaseLabels[item.phase]}</div>
-                                        <div className="flex-1 flex gap-1">
-                                            {Array.from({ length: totalWeeks }, (_, i) => (
-                                                <div
-                                                    key={i}
-                                                    className={`flex-1 h-8 rounded ${i >= item.startWeek && i < item.endWeek
-                                                        ? phaseColors[item.phase].replace('bg-', 'bg-').split(' ')[0].replace('/10', '')
-                                                        : "bg-muted"
-                                                        }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <div className="w-16 text-right text-sm text-muted-foreground">{Math.round(item.hours)}h</div>
-                                    </div>
-                                ))}
                             </div>
                         </CardContent>
                     </Card>
@@ -1029,19 +1044,23 @@ export default function ProjectDetailPage({
                                     <CardContent>
                                         <div className="space-y-2">
                                             {phaseTasks.map((task) => (
-                                                <div key={task.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg group">
-                                                    <Badge variant="outline" className="text-muted-foreground">{task.moduleName}</Badge>
-                                                    <span className="flex-1 text-foreground">{task.name}</span>
-                                                    <Badge variant="secondary">{roleLabels[task.role]}</Badge>
-                                                    <span className="text-muted-foreground font-mono">{Math.round(task.estimatedHours)}h</span>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => deleteTask(task.id)}
-                                                        className="opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10 transition-opacity h-8 w-8"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
+                                                <div key={task.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 bg-muted/50 rounded-lg group">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <Badge variant="outline" className="text-muted-foreground text-xs">{task.moduleName}</Badge>
+                                                        <Badge variant="secondary" className="text-xs">{roleLabels[task.role]}</Badge>
+                                                    </div>
+                                                    <span className="flex-1 text-foreground text-sm sm:text-base">{task.name}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-muted-foreground font-mono text-sm">{Math.round(task.estimatedHours)}h</span>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => deleteTask(task.id)}
+                                                            className="opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10 transition-opacity h-8 w-8"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -1074,42 +1093,44 @@ export default function ProjectDetailPage({
                                 <CardContent>
                                     <div className="space-y-2">
                                         {module.tasks.map((task) => (
-                                            <div key={task.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg group">
+                                            <div key={task.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 bg-muted/50 rounded-lg group">
                                                 {editingTask === task.id ? (
-                                                    <>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full">
                                                         <Input
                                                             value={editValues.name || task.name}
                                                             onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
                                                             className="flex-1"
                                                         />
-                                                        <Select
-                                                            value={editValues.phase || task.phase}
-                                                            onValueChange={(v) => setEditValues({ ...editValues, phase: v })}
-                                                        >
-                                                            <SelectTrigger className="w-32">
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="analysis">Análisis</SelectItem>
-                                                                <SelectItem value="design">Diseño</SelectItem>
-                                                                <SelectItem value="development">Desarrollo</SelectItem>
-                                                                <SelectItem value="testing">Pruebas</SelectItem>
-                                                                <SelectItem value="deployment">Despliegue</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                        <Input
-                                                            type="number"
-                                                            value={editValues.estimatedHours || task.estimatedHours}
-                                                            onChange={(e) => setEditValues({ ...editValues, estimatedHours: Number(e.target.value) })}
-                                                            className="w-20"
-                                                        />
-                                                        <Button size="icon" onClick={() => updateTask(task.id, editValues)} className="bg-green-600 hover:bg-green-700 h-9 w-9">
-                                                            <Check className="h-4 w-4" />
-                                                        </Button>
-                                                        <Button size="icon" variant="ghost" onClick={() => setEditingTask(null)} className="h-9 w-9">
-                                                            <X className="h-4 w-4" />
-                                                        </Button>
-                                                    </>
+                                                        <div className="flex items-center gap-2">
+                                                            <Select
+                                                                value={editValues.phase || task.phase}
+                                                                onValueChange={(v) => setEditValues({ ...editValues, phase: v })}
+                                                            >
+                                                                <SelectTrigger className="w-28 sm:w-32">
+                                                                    <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="analysis">Análisis</SelectItem>
+                                                                    <SelectItem value="design">Diseño</SelectItem>
+                                                                    <SelectItem value="development">Desarrollo</SelectItem>
+                                                                    <SelectItem value="testing">Pruebas</SelectItem>
+                                                                    <SelectItem value="deployment">Despliegue</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                            <Input
+                                                                type="number"
+                                                                value={editValues.estimatedHours || task.estimatedHours}
+                                                                onChange={(e) => setEditValues({ ...editValues, estimatedHours: Number(e.target.value) })}
+                                                                className="w-20"
+                                                            />
+                                                            <Button size="icon" onClick={() => updateTask(task.id, editValues)} className="bg-green-600 hover:bg-green-700 h-9 w-9 shrink-0">
+                                                                <Check className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button size="icon" variant="ghost" onClick={() => setEditingTask(null)} className="h-9 w-9 shrink-0">
+                                                                <X className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
                                                 ) : (
                                                     <>
                                                         <div className="flex-1">

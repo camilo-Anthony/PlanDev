@@ -121,7 +121,7 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="container max-w-4xl py-8">
+        <div className="container max-w-4xl px-4 py-8">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
                 <Button variant="ghost" size="icon" onClick={() => router.back()}>
@@ -138,8 +138,8 @@ export default function SettingsPage() {
             {/* Message */}
             {message && (
                 <div className={`mb-6 p-4 rounded-lg ${message.type === "success"
-                        ? "bg-green-500/10 text-green-500 border border-green-500/20"
-                        : "bg-destructive/10 text-destructive border border-destructive/20"
+                    ? "bg-green-500/10 text-green-500 border border-green-500/20"
+                    : "bg-destructive/10 text-destructive border border-destructive/20"
                     }`}>
                     {message.text}
                 </div>

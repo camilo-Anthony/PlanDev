@@ -129,7 +129,7 @@ export default function SharedProjectPage({
 
                 {/* Stats */}
                 {project.proposal && (
-                    <div className="grid md:grid-cols-4 gap-4 mb-8 animate-slide-up" style={{ opacity: 0 }}>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8 animate-slide-up" style={{ opacity: 0 }}>
                         <Card className="bg-card border-border card-interactive">
                             <CardContent className="pt-6">
                                 <div className="text-3xl font-bold text-primary">{Math.round(project.proposal.totalHours)}h</div>
@@ -200,9 +200,9 @@ export default function SharedProjectPage({
                                     <CardContent>
                                         <div className="space-y-2">
                                             {sortedTasks.map((task) => (
-                                                <div key={task.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                                                    <span className="text-foreground">{task.name}</span>
-                                                    <div className="flex items-center gap-2">
+                                                <div key={task.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-muted/30 rounded-lg">
+                                                    <span className="text-foreground text-sm sm:text-base">{task.name}</span>
+                                                    <div className="flex items-center gap-2 shrink-0">
                                                         <Badge variant="outline" className="text-xs flex items-center gap-1">
                                                             {phaseLabels[task.phase]?.icon}
                                                             {phaseLabels[task.phase]?.label || task.phase}

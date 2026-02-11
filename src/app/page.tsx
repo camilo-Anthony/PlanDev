@@ -119,7 +119,7 @@ export default function HomePage() {
               </p>
             </div>
           ) : (
-            <div className="flex gap-4 justify-center pt-6 flex-wrap animate-slide-up stagger-2" style={{ opacity: 0 }}>
+            <div className="flex gap-3 sm:gap-4 justify-center pt-6 flex-wrap animate-slide-up stagger-2" style={{ opacity: 0 }}>
               <Button
                 size="lg"
                 onClick={() => setQuickMode(true)}
