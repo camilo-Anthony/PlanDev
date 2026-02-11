@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -29,7 +30,10 @@ import {
     Box,
     Search,
     Grid3X3,
-    List
+    List,
+    Settings,
+    LogOut,
+    BarChart3,
 } from "lucide-react";
 
 interface Project {
@@ -82,6 +86,7 @@ function SkeletonCard() {
 }
 
 export default function ProjectsPage() {
+    const { data: session } = useSession();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -138,6 +143,11 @@ export default function ProjectsPage() {
         p.type.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // Dashboard stats
+    const totalHours = projects.reduce((sum, p) => sum + Math.round(p.proposal?.totalHours || 0), 0);
+    const totalValue = projects.reduce((sum, p) => sum + Math.round(p.proposal?.totalCost || 0), 0);
+    const mainCurrency = projects[0]?.currency || "USD";
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* Header */}
@@ -147,15 +157,63 @@ export default function ProjectsPage() {
                         <Layers className="h-6 w-6" />
                         PlanDev
                     </Link>
-                    <Link href="/projects/new">
-                        <Button className="bg-primary text-primary-foreground hover:bg-primary/90 interactive">
-                            <Plus className="mr-2 h-4 w-4" /> Nuevo Proyecto
+                    <div className="flex items-center gap-2">
+                        {session?.user?.name && (
+                            <span className="text-sm text-muted-foreground hidden sm:inline">
+                                {session.user.name}
+                            </span>
+                        )}
+                        <Link href="/settings">
+                            <Button variant="ghost" size="icon" title="Configuración">
+                                <Settings className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                        <Button variant="ghost" size="icon" title="Cerrar sesión" onClick={() => signOut({ callbackUrl: "/login" })}>
+                            <LogOut className="h-4 w-4" />
                         </Button>
-                    </Link>
+                        <Link href="/projects/new">
+                            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 interactive">
+                                <Plus className="mr-2 h-4 w-4" />
+                                <span className="hidden sm:inline">Nuevo Proyecto</span>
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </header>
 
             <div className="container mx-auto px-4 py-8">
+                {/* Stats Overview */}
+                {!loading && projects.length > 0 && (
+                    <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
+                        <Card className="bg-card border-border">
+                            <CardContent className="pt-5 pb-4 text-center">
+                                <div className="text-2xl sm:text-3xl font-bold text-primary">{projects.length}</div>
+                                <div className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-1">
+                                    <Folder className="h-3 w-3" /> Proyectos
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-card border-border">
+                            <CardContent className="pt-5 pb-4 text-center">
+                                <div className="text-2xl sm:text-3xl font-bold text-foreground">{totalHours}h</div>
+                                <div className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-1">
+                                    <Clock className="h-3 w-3" /> Horas
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-card border-border">
+                            <CardContent className="pt-5 pb-4 text-center">
+                                <div className="text-2xl sm:text-3xl font-bold text-green-500">
+                                    {formatCurrency(totalValue, mainCurrency)}
+                                </div>
+                                <div className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-1">
+                                    <BarChart3 className="h-3 w-3" /> Valor total
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
                 {/* Title and Search */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <h1 className="text-3xl font-bold animate-fade-in">Mis Proyectos</h1>

@@ -12,7 +12,7 @@ import { Sparkles, LogIn, RotateCw, Mail, Lock, AlertCircle } from "lucide-react
 function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+    const callbackUrl = searchParams.get("callbackUrl") || "/projects";
     const error = searchParams.get("error");
 
     const [isLoading, setIsLoading] = useState(false);
