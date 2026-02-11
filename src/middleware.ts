@@ -1,12 +1,10 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export default auth((req) => {
-    const isLoggedIn = !!req.auth;
+export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
     // Rutas públicas que no requieren autenticación
-    const publicRoutes = ["/", "/login", "/register", "/shared"];
+    const publicRoutes = ["/", "/login", "/register"];
     const isPublicRoute = publicRoutes.some(
         (route) => pathname === route || pathname.startsWith("/shared/")
     );
@@ -17,21 +15,24 @@ export default auth((req) => {
         pathname.startsWith(route)
     );
 
-    // Si es ruta pública, permitir acceso
     if (isPublicRoute || isPublicApiRoute) {
         return NextResponse.next();
     }
 
-    // Si no está logueado, redirigir a login
-    if (!isLoggedIn) {
+    // Verificar session cookie de NextAuth (ligero, sin importar auth)
+    const sessionToken =
+        req.cookies.get("authjs.session-token")?.value ||
+        req.cookies.get("__Secure-authjs.session-token")?.value;
+
+    if (!sessionToken) {
         const loginUrl = new URL("/login", req.nextUrl.origin);
         loginUrl.searchParams.set("callbackUrl", pathname);
         return NextResponse.redirect(loginUrl);
     }
 
     return NextResponse.next();
-});
+}
 
 export const config = {
-    matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+    matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)", "/api/:path*"],
 };
