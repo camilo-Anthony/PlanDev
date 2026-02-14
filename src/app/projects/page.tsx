@@ -44,7 +44,7 @@ import {
     Settings,
     LogOut,
     BarChart3,
-    AlertTriangle,
+
 } from "lucide-react";
 
 interface Project {
@@ -213,9 +213,9 @@ export default function ProjectsPage() {
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-card border-border">
-                            <CardContent className="pt-5 pb-4 text-center">
-                                <div className="text-2xl sm:text-3xl font-bold text-green-500">
+                        <Card className="bg-card border-border overflow-hidden">
+                            <CardContent className="pt-5 pb-4 px-2 sm:px-6 text-center">
+                                <div className="text-lg sm:text-3xl font-bold text-green-500 truncate">
                                     {formatCurrency(totalValue, mainCurrency)}
                                 </div>
                                 <div className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-1">
