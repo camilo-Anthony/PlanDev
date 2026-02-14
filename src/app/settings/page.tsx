@@ -105,8 +105,37 @@ export default function SettingsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="container max-w-4xl px-4 py-8">
+                {/* Header skeleton */}
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="skeleton h-10 w-10 rounded-lg" />
+                    <div className="space-y-2">
+                        <div className="skeleton h-7 w-48 rounded" />
+                        <div className="skeleton h-4 w-72 rounded" />
+                    </div>
+                </div>
+
+                {/* Cards skeleton */}
+                <div className="space-y-6">
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className="bg-card border-border">
+                            <CardHeader>
+                                <div className="skeleton h-6 w-40 rounded" />
+                                <div className="skeleton h-4 w-64 rounded mt-1" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {[1, 2, 3, 4].map((j) => (
+                                        <div key={j} className="space-y-2">
+                                            <div className="skeleton h-4 w-24 rounded" />
+                                            <div className="skeleton h-10 w-full rounded" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </div>
         );
     }

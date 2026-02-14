@@ -7,6 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
     Card,
     CardContent,
     CardDescription,
@@ -91,6 +101,7 @@ export default function ProjectsPage() {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
     useEffect(() => {
         fetchProjects();
@@ -111,8 +122,6 @@ export default function ProjectsPage() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Estas seguro de eliminar este proyecto?")) return;
-
         try {
             const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
             if (res.ok) {
@@ -120,6 +129,8 @@ export default function ProjectsPage() {
             }
         } catch (error) {
             console.error("Error:", error);
+        } finally {
+            setDeleteTarget(null);
         }
     };
 
@@ -310,7 +321,7 @@ export default function ProjectsPage() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            onClick={() => handleDelete(project.id)}
+                                            onClick={() => setDeleteTarget({ id: project.id, name: project.name })}
                                             className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 h-8 w-8 transition-opacity"
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -367,6 +378,27 @@ export default function ProjectsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Eliminar proyecto</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            ¿Estás seguro de que quieres eliminar <strong>{deleteTarget?.name}</strong>? Esta acción no se puede deshacer y se perderán todas las estimaciones y datos del proyecto.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={() => deleteTarget && handleDelete(deleteTarget.id)}
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
