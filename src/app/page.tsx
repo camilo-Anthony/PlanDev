@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,9 +14,13 @@ import {
   FileText,
   CheckCircle2,
   Folder,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -42,23 +47,47 @@ export default function HomePage() {
 
           {/* CTA Buttons */}
           <div className="flex gap-3 sm:gap-4 justify-center pt-6 flex-wrap animate-slide-up stagger-2" style={{ opacity: 0 }}>
-            <Link href="/projects/new">
-              <Button
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg interactive"
-              >
-                <Rocket className="mr-2 h-5 w-5" /> Crear Proyecto
-              </Button>
-            </Link>
-            <Link href="/projects">
-              <Button
-                size="lg"
-                variant="outline"
-                className="px-8 py-6 text-lg interactive"
-              >
-                <Folder className="mr-2 h-5 w-5" /> Mis Proyectos
-              </Button>
-            </Link>
+            {session ? (
+              <>
+                <Link href="/projects/new">
+                  <Button
+                    size="lg"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg interactive"
+                  >
+                    <Rocket className="mr-2 h-5 w-5" /> Crear Proyecto
+                  </Button>
+                </Link>
+                <Link href="/projects">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-8 py-6 text-lg interactive"
+                  >
+                    <Folder className="mr-2 h-5 w-5" /> Mis Proyectos
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/register">
+                  <Button
+                    size="lg"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg interactive"
+                  >
+                    <UserPlus className="mr-2 h-5 w-5" /> Comenzar Gratis
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-8 py-6 text-lg interactive"
+                  >
+                    <LogIn className="mr-2 h-5 w-5" /> Iniciar Sesion
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
