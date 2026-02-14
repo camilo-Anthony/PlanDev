@@ -44,6 +44,7 @@ import {
     Settings,
     LogOut,
     BarChart3,
+    AlertTriangle,
 } from "lucide-react";
 
 interface Project {
@@ -322,7 +323,7 @@ export default function ProjectsPage() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => setDeleteTarget({ id: project.id, name: project.name })}
-                                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 h-8 w-8 transition-opacity"
+                                            className="text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 h-8 w-8 transition-colors"
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
@@ -381,17 +382,24 @@ export default function ProjectsPage() {
 
             {/* Delete Confirmation Modal */}
             <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Eliminar proyecto</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            ¿Estás seguro de que quieres eliminar <strong>{deleteTarget?.name}</strong>? Esta acción no se puede deshacer y se perderán todas las estimaciones y datos del proyecto.
+                <AlertDialogContent className="bg-card border-border sm:max-w-md">
+                    <AlertDialogHeader className="space-y-4">
+                        <div className="mx-auto w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                            <AlertTriangle className="h-7 w-7 text-destructive" />
+                        </div>
+                        <AlertDialogTitle className="text-center text-xl">Eliminar proyecto</AlertDialogTitle>
+                        <AlertDialogDescription className="text-center text-muted-foreground">
+                            Esta acción no se puede deshacer. Se eliminarán todas las estimaciones, módulos y datos asociados.
                         </AlertDialogDescription>
+                        <div className="bg-muted/50 border border-border rounded-lg p-3 text-center">
+                            <p className="text-sm text-muted-foreground">Proyecto a eliminar</p>
+                            <p className="font-semibold text-foreground mt-1">{deleteTarget?.name}</p>
+                        </div>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogFooter className="sm:flex-row gap-2 mt-2">
+                        <AlertDialogCancel className="flex-1">Cancelar</AlertDialogCancel>
                         <AlertDialogAction
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            className="flex-1 bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             onClick={() => deleteTarget && handleDelete(deleteTarget.id)}
                         >
                             <Trash2 className="mr-2 h-4 w-4" /> Eliminar
