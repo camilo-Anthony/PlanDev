@@ -382,27 +382,20 @@ export default function ProjectsPage() {
 
             {/* Delete Confirmation Modal */}
             <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-                <AlertDialogContent className="bg-card border-border sm:max-w-md">
-                    <AlertDialogHeader className="space-y-4">
-                        <div className="mx-auto w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
-                            <AlertTriangle className="h-7 w-7 text-destructive" />
-                        </div>
-                        <AlertDialogTitle className="text-center text-xl">Eliminar proyecto</AlertDialogTitle>
-                        <AlertDialogDescription className="text-center text-muted-foreground">
-                            Esta acción no se puede deshacer. Se eliminarán todas las estimaciones, módulos y datos asociados.
+                <AlertDialogContent className="bg-card border-border sm:max-w-sm">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Eliminar proyecto</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            ¿Eliminar <strong className="text-foreground">{deleteTarget?.name}</strong>? Esta acción es permanente.
                         </AlertDialogDescription>
-                        <div className="bg-muted/50 border border-border rounded-lg p-3 text-center">
-                            <p className="text-sm text-muted-foreground">Proyecto a eliminar</p>
-                            <p className="font-semibold text-foreground mt-1">{deleteTarget?.name}</p>
-                        </div>
                     </AlertDialogHeader>
-                    <AlertDialogFooter className="sm:flex-row gap-2 mt-2">
+                    <AlertDialogFooter className="sm:flex-row gap-2">
                         <AlertDialogCancel className="flex-1">Cancelar</AlertDialogCancel>
                         <AlertDialogAction
                             className="flex-1 bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             onClick={() => deleteTarget && handleDelete(deleteTarget.id)}
                         >
-                            <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                            Eliminar
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
