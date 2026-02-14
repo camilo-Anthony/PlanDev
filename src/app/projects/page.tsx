@@ -168,7 +168,7 @@ export default function ProjectsPage() {
                                 <Settings className="h-4 w-4" />
                             </Button>
                         </Link>
-                        <Button variant="ghost" size="icon" title="Cerrar sesión" onClick={() => signOut({ callbackUrl: "/login" })}>
+                        <Button variant="ghost" size="icon" title="Cerrar sesión" onClick={() => signOut({ callbackUrl: "/" })}>
                             <LogOut className="h-4 w-4" />
                         </Button>
                         <Link href="/projects/new">

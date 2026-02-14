@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowLeft, Save, RotateCcw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +32,6 @@ interface UserConfig {
 }
 
 export default function SettingsPage() {
-    const router = useRouter();
     const [config, setConfig] = useState<UserConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -124,9 +123,11 @@ export default function SettingsPage() {
         <div className="container max-w-4xl px-4 py-8">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
+                <Link href="/projects">
+                    <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                </Link>
                 <div>
                     <h1 className="text-2xl font-bold">Configuración</h1>
                     <p className="text-muted-foreground">
