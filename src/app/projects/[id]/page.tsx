@@ -560,7 +560,7 @@ export default function ProjectDetailPage({
 
                                     return (
                                         <>
-                                            <div className="text-3xl font-bold text-green-500">{formatCurrency(calculatedTotalCost)}</div>
+                                            <div className="text-xl sm:text-3xl font-bold text-green-500 truncate">{formatCurrency(calculatedTotalCost)}</div>
                                             <div className="text-sm text-muted-foreground flex items-center gap-1 mb-3">
                                                 <DollarSign className="h-4 w-4" /> Costo total
                                             </div>
