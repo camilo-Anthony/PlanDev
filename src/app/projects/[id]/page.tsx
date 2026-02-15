@@ -152,6 +152,12 @@ export default function ProjectDetailPage({
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [regenerateNote, setRegenerateNote] = useState("");
     const [restoringHistoryId, setRestoringHistoryId] = useState<string | null>(null);
+    const [confirmAction, setConfirmAction] = useState<{
+        title: string;
+        description: string;
+        onConfirm: () => void;
+        destructive?: boolean;
+    } | null>(null);
 
     const fetchProject = useCallback(async () => {
         try {
@@ -212,30 +218,34 @@ export default function ProjectDetailPage({
     }, [fetchHistory]);
 
     const restoreHistory = async (historyId: string) => {
-        if (!confirm("¿Restaurar esta versión? El plan actual se guardará en el historial.")) return;
-        setRestoringHistoryId(historyId);
-        try {
-            const res = await fetch(`/api/projects/${id}/history`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ historyId }),
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setProject(data.project);
-                setViewMode("summary");
-                fetchHistory();
-                alert(data.message);
-            } else {
-                const error = await res.json();
-                alert(error.error || "Error al restaurar");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Error de conexión");
-        } finally {
-            setRestoringHistoryId(null);
-        }
+        setConfirmAction({
+            title: "Restaurar versión",
+            description: "El plan actual se guardará en el historial antes de restaurar esta versión.",
+            onConfirm: async () => {
+                setRestoringHistoryId(historyId);
+                try {
+                    const res = await fetch(`/api/projects/${id}/history`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ historyId }),
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setProject(data.project);
+                        setViewMode("summary");
+                        fetchHistory();
+                    } else {
+                        const error = await res.json();
+                        alert(error.error || "Error al restaurar");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Error de conexión");
+                } finally {
+                    setRestoringHistoryId(null);
+                }
+            },
+        });
     };
 
     const updateTask = async (taskId: string, updates: Partial<Task>) => {
@@ -255,23 +265,35 @@ export default function ProjectDetailPage({
     };
 
     const deleteTask = async (taskId: string) => {
-        if (!confirm("¿Eliminar esta tarea?")) return;
-        try {
-            await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
-            await fetchProject();
-        } catch (error) {
-            console.error("Error:", error);
-        }
+        setConfirmAction({
+            title: "Eliminar tarea",
+            description: "Esta acción es permanente y no se puede deshacer.",
+            destructive: true,
+            onConfirm: async () => {
+                try {
+                    await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+                    await fetchProject();
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            },
+        });
     };
 
     const deleteModule = async (moduleId: string) => {
-        if (!confirm("¿Eliminar este módulo y todas sus tareas?")) return;
-        try {
-            await fetch(`/api/modules/${moduleId}`, { method: "DELETE" });
-            await fetchProject();
-        } catch (error) {
-            console.error("Error:", error);
-        }
+        setConfirmAction({
+            title: "Eliminar módulo",
+            description: "Se eliminará el módulo y todas sus tareas. Esta acción es permanente.",
+            destructive: true,
+            onConfirm: async () => {
+                try {
+                    await fetch(`/api/modules/${moduleId}`, { method: "DELETE" });
+                    await fetchProject();
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            },
+        });
     };
 
     const formatCurrency = (amount: number) => {
@@ -441,11 +463,16 @@ export default function ProjectDetailPage({
                                     size="sm"
                                     title="Duplicar"
                                     className="px-2 sm:px-3"
-                                    onClick={async () => {
-                                        if (!confirm("¿Duplicar este proyecto?")) return;
-                                        const res = await fetch(`/api/projects/${id}/duplicate`, { method: "POST" });
-                                        const data = await res.json();
-                                        window.location.href = `/projects/${data.id}`;
+                                    onClick={() => {
+                                        setConfirmAction({
+                                            title: "Duplicar proyecto",
+                                            description: "Se creará una copia exacta de este proyecto.",
+                                            onConfirm: async () => {
+                                                const res = await fetch(`/api/projects/${id}/duplicate`, { method: "POST" });
+                                                const data = await res.json();
+                                                window.location.href = `/projects/${data.id}`;
+                                            },
+                                        });
                                     }}
                                 >
                                     <Copy className="h-4 w-4" />
@@ -458,26 +485,24 @@ export default function ProjectDetailPage({
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={async () => {
-                                        if (!confirm("¿Generar historias de usuario con IA? Esto tomará unos segundos.")) return;
-                                        const btn = document.activeElement as HTMLButtonElement;
-                                        const originalText = btn.innerHTML;
-                                        btn.innerHTML = "Generando...";
-                                        btn.disabled = true;
-                                        try {
-                                            const res = await fetch(`/api/projects/${id}/generate-stories`, { method: "POST" });
-                                            const data = await res.json();
-                                            if (data.success) {
-                                                alert(`${data.count} historias generadas`);
-                                                window.location.reload();
-                                            } else {
-                                                alert("Error: " + data.error);
-                                            }
-                                        } catch {
-                                            alert("Error al generar historias");
-                                        }
-                                        btn.innerHTML = originalText;
-                                        btn.disabled = false;
+                                    onClick={() => {
+                                        setConfirmAction({
+                                            title: "Generar historias de usuario",
+                                            description: "Se generarán historias de usuario con IA. Esto tomará unos segundos.",
+                                            onConfirm: async () => {
+                                                try {
+                                                    const res = await fetch(`/api/projects/${id}/generate-stories`, { method: "POST" });
+                                                    const data = await res.json();
+                                                    if (data.success) {
+                                                        window.location.reload();
+                                                    } else {
+                                                        alert("Error: " + data.error);
+                                                    }
+                                                } catch {
+                                                    alert("Error al generar historias");
+                                                }
+                                            },
+                                        });
                                     }}
                                 >
                                     <BookOpen className="h-4 w-4 sm:mr-2" />
@@ -518,7 +543,6 @@ export default function ProjectDetailPage({
             </header>
 
             <div className="container mx-auto px-4 py-8">
-                {/* Stats */}
                 {/* Stats */}
                 {project.proposal && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8 text-foreground">
@@ -1244,6 +1268,29 @@ export default function ProjectDetailPage({
                     </div>
                 )}
             </div>
+            {/* Confirmation Dialog */}
+            <AlertDialog open={!!confirmAction} onOpenChange={(open) => !open && setConfirmAction(null)}>
+                <AlertDialogContent className="bg-card border-border sm:max-w-sm">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{confirmAction?.title}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {confirmAction?.description}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="sm:flex-row gap-2">
+                        <AlertDialogCancel className="flex-1">Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                            className={`flex-1 ${confirmAction?.destructive ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}`}
+                            onClick={() => {
+                                confirmAction?.onConfirm();
+                                setConfirmAction(null);
+                            }}
+                        >
+                            Confirmar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

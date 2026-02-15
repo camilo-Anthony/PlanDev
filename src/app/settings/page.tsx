@@ -7,6 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface UserConfig {
     id: string;
@@ -36,6 +46,7 @@ export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+    const [showResetDialog, setShowResetDialog] = useState(false);
 
     useEffect(() => {
         fetchConfig();
@@ -81,7 +92,7 @@ export default function SettingsPage() {
     }
 
     async function handleReset() {
-        if (!confirm("¿Restablecer todos los valores a sus valores por defecto?")) return;
+        setShowResetDialog(false);
         setSaving(true);
 
         try {
@@ -326,7 +337,7 @@ export default function SettingsPage() {
 
                 {/* Actions */}
                 <div className="flex gap-4 justify-end">
-                    <Button variant="outline" onClick={handleReset} disabled={saving}>
+                    <Button variant="outline" onClick={() => setShowResetDialog(true)} disabled={saving}>
                         <RotateCcw className="w-4 h-4 mr-2" />
                         Restablecer
                     </Button>
@@ -340,6 +351,26 @@ export default function SettingsPage() {
                     </Button>
                 </div>
             </div>
+
+            <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                <AlertDialogContent className="bg-card border-border sm:max-w-sm">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Restablecer configuración</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Todos los valores volverán a sus valores por defecto. Esta acción no se puede deshacer.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="sm:flex-row gap-2">
+                        <AlertDialogCancel className="flex-1">Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                            className="flex-1 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={handleReset}
+                        >
+                            Restablecer
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
