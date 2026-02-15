@@ -108,7 +108,7 @@ export async function POST(
 
         // Si excede límite, escalar proporcionalmente
         if (plan.totalHours > maxHours) {
-            logger.warn(`⚠️ IA excedió límite: ${plan.totalHours} h > ${maxHours} h. Escalando...`, { context: 'GeneratePlan' });
+            logger.warn(`IA excedio limite: ${plan.totalHours} h > ${maxHours} h. Escalando...`, { context: 'GeneratePlan' });
             const scaleFactor = maxHours / plan.totalHours;
 
             for (const mod of plan.modules) {

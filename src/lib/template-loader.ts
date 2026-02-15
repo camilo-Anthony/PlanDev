@@ -278,7 +278,7 @@ export function getEstimationTemplate(projectType: string, complexity?: string):
     const templateName = selectTemplate(projectType, complexity);
 
     if (!templateName) {
-        console.warn(`⚠️ No template found for project type: ${projectType}`);
+        console.warn(`No template found for project type: ${projectType}`);
         return null;
     }
 
