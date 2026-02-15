@@ -295,10 +295,10 @@ export function getEstimationTemplate(projectType: string, complexity?: string):
 
         // Verificar que el template tiene contenido sustancial
         if (templateContent.length < 100) {
-            console.warn(`⚠️ Template seems too short (${templateContent.length} chars)`);
+            console.warn(`Template seems too short (${templateContent.length} chars)`);
         }
     } else {
-        console.error(`❌ Failed to load template: ${templateName}`);
+        console.error(`Failed to load template: ${templateName}`);
     }
 
     return templateContent;

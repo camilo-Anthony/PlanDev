@@ -468,7 +468,7 @@ export default function ProjectDetailPage({
                                             const res = await fetch(`/api/projects/${id}/generate-stories`, { method: "POST" });
                                             const data = await res.json();
                                             if (data.success) {
-                                                alert(`✅ ${data.count} historias generadas`);
+                                                alert(`${data.count} historias generadas`);
                                                 window.location.reload();
                                             } else {
                                                 alert("Error: " + data.error);
@@ -495,7 +495,7 @@ export default function ProjectDetailPage({
                                             const res = await fetch(`/api/projects/${id}/recalculate`, { method: "POST" });
                                             const data = await res.json();
                                             if (data.success) {
-                                                alert(`✅ Costos actualizados:\n• Horas: ${Math.round(data.totalHours)}h\n• Costo: ${formatCurrency(data.totalCost)}\n• Duración: ${data.duration}`);
+                                                alert(`Costos actualizados:\n• Horas: ${Math.round(data.totalHours)}h\n• Costo: ${formatCurrency(data.totalCost)}\n• Duración: ${data.duration}`);
                                                 await fetchProject();
                                             } else {
                                                 alert("Error: " + data.error);
@@ -950,9 +950,9 @@ export default function ProjectDetailPage({
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="pending">⏳ Pendiente</SelectItem>
-                                                            <SelectItem value="in_progress">🔄 En Progreso</SelectItem>
-                                                            <SelectItem value="completed">✅ Completada</SelectItem>
+                                                            <SelectItem value="pending">Pendiente</SelectItem>
+                                                            <SelectItem value="in_progress">En Progreso</SelectItem>
+                                                            <SelectItem value="completed">Completada</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                     <Badge variant="outline" className="text-muted-foreground text-xs hidden sm:inline-flex">{task.moduleName}</Badge>

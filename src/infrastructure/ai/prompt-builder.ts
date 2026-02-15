@@ -27,13 +27,13 @@ export function buildPlanPrompt(input: PlanGenerationInput): string {
 
   const templateSection = estimationTemplate
     ? `
-## 🚨 TEMPLATE OBLIGATORIO - ESTO ES UNA ORDEN, NO UNA SUGERENCIA
+## TEMPLATE OBLIGATORIO - ESTO ES UNA ORDEN, NO UNA SUGERENCIA
 
 ${estimationTemplate}
 
 ---
 
-# ⛔ REGLA ABSOLUTA - LEE ESTO ANTES DE CONTINUAR
+# REGLA ABSOLUTA - LEE ESTO ANTES DE CONTINUAR
 
 El template arriba especifica **"Horas base: XXh"**. 
 
@@ -42,15 +42,15 @@ El template arriba especifica **"Horas base: XXh"**.
 ## Tolerancia MÁXIMA: ±5%
 
 Si el template dice **85h**:
-- ✅ ACEPTABLE: 81h - 89h
-- ❌ RECHAZADO: 113h (+33%)
-- ❌ RECHAZADO: 70h (-18%)
+- ACEPTABLE: 81h - 89h
+- RECHAZADO: 113h (+33%)
+- RECHAZADO: 70h (-18%)
 
 Si el template dice **120h**:
-- ✅ ACEPTABLE: 114h - 126h  
-- ❌ RECHAZADO: 199h (+66%)
+- ACEPTABLE: 114h - 126h  
+- RECHAZADO: 199h (+66%)
 
-## ⚠️ PROCESO OBLIGATORIO
+## PROCESO OBLIGATORIO
 
 **ANTES de generar:**
 1. Lee "Horas base" del template
@@ -64,19 +64,19 @@ Si el template dice **120h**:
 5. Suma TODAS las hoursExpected
 6. ¿Dentro de ±5%? SÍ → responde | NO → AJUSTA
 
-## 🔴 EJEMPLO: Te pasaste (DEBES AJUSTAR)
+## EJEMPLO: Te pasaste (DEBES AJUSTAR)
 
 \`\`\`
 Template: 85h
-Tus tareas: 113h (+33%) ❌
+Tus tareas: 113h (+33%) RECHAZADO
 
 AJUSTA AHORA:
 - Reduce cada tarea × 0.75 (113h → 85h)
 - O elimina módulos no esenciales
-- RESULTADO: 81-89h ✅
+- RESULTADO: 81-89h OK
 \`\`\`
 
-## ⛔ ADVERTENCIA FINAL
+## ADVERTENCIA FINAL
 
 **Tu respuesta será RECHAZADA si no cumples ±5%**
 

@@ -47,7 +47,7 @@ export async function POST(
         const features = JSON.parse(project.requirements.features || "[]");
         const integrations = JSON.parse(project.requirements.integrations || "[]");
 
-        // 🔍 DETECCIÓN AUTOMÁTICA DE TIPO DE PROYECTO
+        // DETECCION AUTOMATICA DE TIPO DE PROYECTO
         // Importar función de detección
         const { detectProjectType } = await import("@/lib/template-loader");
 
@@ -183,7 +183,7 @@ export async function POST(
                 },
             });
 
-            logger.info(`📜 Plan v${newVersion} guardado en historial`, { context: 'GeneratePlan' });
+            logger.info(`Plan v${newVersion} guardado en historial`, { context: 'GeneratePlan' });
         }
         // ========================================================
 
