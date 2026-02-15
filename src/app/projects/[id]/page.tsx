@@ -1006,7 +1006,7 @@ export default function ProjectDetailPage({
                                                     <div
                                                         key={i}
                                                         className={`flex-1 h-8 rounded ${i >= item.startWeek && i < item.endWeek
-                                                            ? phaseColors[item.phase].replace('bg-', 'bg-').split(' ')[0].replace('/10', '')
+                                                            ? phaseColors[item.phase]?.split(' ')[0] || 'bg-primary'
                                                             : "bg-muted"
                                                             }`}
                                                     />
@@ -1035,9 +1035,7 @@ export default function ProjectDetailPage({
                                     <CardHeader>
                                         <CardTitle>{phaseLabels[phase]}</CardTitle>
                                         <CardDescription>
-                                            <CardDescription>
-                                                {phaseTasks.reduce((sum, t) => sum + Math.round(t.estimatedHours), 0)} horas
-                                            </CardDescription>
+                                            {phaseTasks.reduce((sum, t) => sum + Math.round(t.estimatedHours), 0)} horas
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
@@ -1055,7 +1053,7 @@ export default function ProjectDetailPage({
                                                             variant="ghost"
                                                             size="icon"
                                                             onClick={() => deleteTask(task.id)}
-                                                            className="opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10 transition-opacity h-8 w-8"
+                                                            className="text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors h-8 w-8"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
@@ -1151,7 +1149,7 @@ export default function ProjectDetailPage({
                                                                 variant="ghost"
                                                                 size="icon"
                                                                 onClick={() => { setEditingTask(task.id); setEditValues(task); }}
-                                                                className="opacity-0 group-hover:opacity-100 text-primary hover:text-primary hover:bg-primary/10 h-8 w-8"
+                                                                className="text-muted-foreground/50 hover:text-primary hover:bg-primary/10 transition-colors h-8 w-8"
                                                             >
                                                                 <Edit2 className="h-4 w-4" />
                                                             </Button>
@@ -1159,7 +1157,7 @@ export default function ProjectDetailPage({
                                                                 variant="ghost"
                                                                 size="icon"
                                                                 onClick={() => deleteTask(task.id)}
-                                                                className="opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8"
+                                                                className="text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors h-8 w-8"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
                                                             </Button>
