@@ -312,7 +312,7 @@ export default function ProjectDetailPage({
 
         phases.forEach((phase) => {
             const phaseHours = project.modules.reduce(
-                (sum, m) => sum + m.tasks.filter((t) => t.phase === phase).reduce((s, t) => s + t.estimatedHours, 0),
+                (sum, m) => sum + m.tasks.filter((t) => t.phase === phase).reduce((s, t) => s + Math.round(t.estimatedHours), 0),
                 0
             );
 
@@ -814,7 +814,6 @@ export default function ProjectDetailPage({
                     </Card>
                 )}
 
-                {/* Summary */}
                 {/* Summary */}
                 {viewMode === "summary" && stats && project.modules.length > 0 && (
                     <div className="grid md:grid-cols-2 gap-6 text-foreground">
