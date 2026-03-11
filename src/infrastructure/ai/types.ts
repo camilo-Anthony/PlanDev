@@ -2,7 +2,7 @@
  * AI Provider Interface - Contrato para proveedores de IA
  * 
  * Define la interfaz que deben implementar todos los adaptadores de IA.
- * Facilita cambiar entre Perplexity, OpenAI, Claude, etc.
+ * Facilita cambiar entre Groq, OpenAI, Claude, etc.
  */
 
 import type { GeneratedPlan } from "@/domain/types";
@@ -53,7 +53,7 @@ export interface AIProviderConfig {
 
 /**
  * Interfaz para proveedores de IA
- * Permite intercambiar Perplexity por OpenAI, Claude, etc.
+ * Permite intercambiar Groq por OpenAI, Claude, etc.
  */
 export interface IAIProvider {
     /**

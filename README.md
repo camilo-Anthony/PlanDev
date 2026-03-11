@@ -4,7 +4,7 @@
 
 ## 🚀 Características
 
-- **Estimación Inteligente**: Generación automática de planes de proyecto usando IA (Perplexity)
+- **Estimación Inteligente**: Generación automática de planes de proyecto usando IA (Groq)
 - **Metodología PERT**: Estimaciones de 3 puntos (optimista, más probable, pesimista)
 - **Multi-tenancy**: Sistema de autenticación con NextAuth.js v5
 - **Gestión Completa**: Módulos, tareas, fases y contingencias
@@ -18,13 +18,13 @@
 - **Base de Datos**: SQLite con [Prisma ORM](https://www.prisma.io/)
 - **Autenticación**: [NextAuth.js v5](https://authjs.dev/)
 - **UI**: React 19 + [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
-- **IA**: Perplexity API para generación de planes
+- **IA**: Groq API para generación de planes
 - **Validación**: Zod schemas
 
 ## 📋 Requisitos Previos
 
 - Node.js 18+ y npm
-- Cuenta de [Perplexity AI](https://www.perplexity.ai/) (para API key)
+- Cuenta de [Groq](https://console.groq.com/) (para API key)
 - (Opcional) Google OAuth credentials para login social
 
 ## 🔧 Instalación
@@ -56,8 +56,8 @@ Edita `.env.local` con tus credenciales:
 # Database
 DATABASE_URL="file:./dev.db"
 
-# Perplexity AI
-PERPLEXITY_API_KEY="tu-api-key-aqui"
+# Groq AI
+GROQ_API_KEY="tu-api-key-aqui"
 
 # NextAuth
 AUTH_SECRET="genera-uno-con: openssl rand -base64 32"
@@ -101,7 +101,7 @@ src/
 │   ├── config/           # Constantes y configuración
 │   └── estimation/       # Cálculos PERT y estimaciones
 ├── infrastructure/       # Servicios externos
-│   └── ai/              # Adaptadores de IA (Perplexity)
+│   └── ai/              # Adaptadores de IA (Groq)
 ├── lib/                  # Utilidades
 │   ├── db.ts            # Cliente Prisma
 │   ├── error-handler.ts # Manejo centralizado de errores
@@ -186,4 +186,4 @@ MIT
 - [Prisma](https://www.prisma.io/)
 - [NextAuth.js](https://authjs.dev/)
 - [shadcn/ui](https://ui.shadcn.com/)
-- [Perplexity AI](https://www.perplexity.ai/)
+- [Groq](https://groq.com/)

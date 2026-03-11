@@ -180,7 +180,7 @@ export const ESTIMATION_BASE: Record<string, PertEstimate> = {
 export const AI_CONFIG = {
     temperature: 0.5,
     maxTokens: 8000,
-    model: "sonar",
+    model: "llama-3.3-70b-versatile",
 } as const;
 
 // ============================================

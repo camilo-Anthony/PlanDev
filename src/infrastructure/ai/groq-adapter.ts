@@ -1,7 +1,8 @@
 /**
- * Perplexity Adapter - Implementación del proveedor de IA para Perplexity
+ * Groq Adapter - Implementación del proveedor de IA para Groq
  * 
- * Implementa la interfaz IAIProvider para Perplexity API.
+ * Implementa la interfaz IAIProvider para Groq API.
+ * Groq usa una API compatible con OpenAI.
  */
 
 import type { GeneratedPlan } from "@/domain/types";
@@ -9,7 +10,7 @@ import type { IAIProvider, PlanGenerationInput, AIProviderConfig } from "./types
 import { buildPlanPrompt, buildSystemPrompt } from "./prompt-builder";
 import { AI_CONFIG } from "@/domain/constants";
 
-const PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions";
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 /**
  * Intenta reparar JSON truncado
@@ -79,10 +80,10 @@ function validateAndCorrectPlan(plan: GeneratedPlan): GeneratedPlan {
 }
 
 /**
- * Implementación de Perplexity como proveedor de IA
+ * Implementación de Groq como proveedor de IA
  */
-export class PerplexityAdapter implements IAIProvider {
-    readonly name = "Perplexity";
+export class GroqAdapter implements IAIProvider {
+    readonly name = "Groq";
 
     private readonly apiKey: string;
     private readonly temperature: number;
@@ -100,7 +101,7 @@ export class PerplexityAdapter implements IAIProvider {
         const prompt = buildPlanPrompt(input);
         const systemPrompt = buildSystemPrompt();
 
-        const response = await fetch(PERPLEXITY_API_URL, {
+        const response = await fetch(GROQ_API_URL, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
@@ -119,7 +120,7 @@ export class PerplexityAdapter implements IAIProvider {
 
         if (!response.ok) {
             const error = await response.text();
-            throw new Error(`Perplexity API error: ${response.status} - ${error}`);
+            throw new Error(`Groq API error: ${response.status} - ${error}`);
         }
 
         const result = await response.json();
@@ -147,16 +148,16 @@ export class PerplexityAdapter implements IAIProvider {
 }
 
 /**
- * Crea una instancia del adaptador de Perplexity con configuración del entorno
+ * Crea una instancia del adaptador de Groq con configuración del entorno
  */
-export function createPerplexityAdapter(): IAIProvider {
-    const apiKey = process.env.PERPLEXITY_API_KEY;
+export function createGroqAdapter(): IAIProvider {
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
-        throw new Error("PERPLEXITY_API_KEY environment variable is required");
+        throw new Error("GROQ_API_KEY environment variable is required");
     }
 
-    return new PerplexityAdapter({
+    return new GroqAdapter({
         apiKey,
         temperature: parseFloat(process.env.AI_TEMPERATURE || String(AI_CONFIG.temperature)),
         maxTokens: parseInt(process.env.AI_MAX_TOKENS || String(AI_CONFIG.maxTokens)),

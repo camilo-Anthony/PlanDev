@@ -18,8 +18,8 @@ export {
     buildSystemPrompt,
 } from "./prompt-builder";
 
-// Perplexity Adapter
+// Groq Adapter
 export {
-    PerplexityAdapter,
-    createPerplexityAdapter,
-} from "./perplexity-adapter";
+    GroqAdapter,
+    createGroqAdapter,
+} from "./groq-adapter";

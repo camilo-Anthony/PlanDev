@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { createPerplexityAdapter } from "@/infrastructure/ai";
+import { createGroqAdapter } from "@/infrastructure/ai";
 import { handleApiError } from "@/lib/error-handler";
 import { logger } from "@/lib/logger";
 import {
@@ -62,7 +62,7 @@ export async function POST(
         logger.info(`Auto-detected project type: ${detected.type} (complexity: ${detected.complexity}, confidence: ${detected.confidence})`);
 
         // Generar plan con IA (PERT) usando tipo detectado
-        const aiAdapter = createPerplexityAdapter();
+        const aiAdapter = createGroqAdapter();
         const plan = await aiAdapter.generatePlan({
             projectName: project.name,
             projectType: detected.type, // Usar tipo detectado en lugar de project.type

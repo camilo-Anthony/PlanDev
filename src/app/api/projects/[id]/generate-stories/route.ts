@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { handleApiError } from "@/lib/error-handler";
 
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 interface UserStoryResult {
     taskId: string;
@@ -17,7 +17,7 @@ export async function POST(
     try {
         const { id } = await params;
 
-        if (!PERPLEXITY_API_KEY) {
+        if (!GROQ_API_KEY) {
             return NextResponse.json(
                 { error: "API key no configurada" },
                 { status: 500 }
@@ -65,14 +65,14 @@ Responde SOLO en formato JSON (el taskIndex debe coincidir exactamente con el n�
   ]
 }`;
 
-        const response = await fetch("https://api.perplexity.ai/chat/completions", {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${PERPLEXITY_API_KEY}`,
+                "Authorization": `Bearer ${GROQ_API_KEY}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                model: "sonar",
+                model: "llama-3.3-70b-versatile",
                 messages: [
                     { role: "system", content: "Eres un experto en análisis de requisitos y metodologías ágiles. Responde solo en JSON válido." },
                     { role: "user", content: prompt },
